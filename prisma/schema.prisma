@@ -6,10 +6,115 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  password      String
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+  Bid Bid[]
+  Post Post[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+model Post {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  title       String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  files       PostFile[]
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bids        Bid[]
+
+  @@map("posts")
+}
+
+model PostFile {
+  id       String   @id @default(cuid())
+  postId   String   @map("post_id")
+  url      String   // URL to file (image/doc)
+  type     String   // e.g., "image", "doc", "pdf", "video", etc.
+  createdAt DateTime @default(now())
+
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("post_files")
+}
+
+model Bid {
+  id          String   @id @default(cuid())
+  postId      String   @map("post_id")
+  bidderId    String   @map("bidder_id")
+  text        String
+  createdAt   DateTime @default(now())
+  files       BidFile[]
+
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  bidder      User     @relation(fields: [bidderId], references: [id], onDelete: Cascade)
+
+  @@map("bids")
+}
+
+model BidFile {
+  id       String   @id @default(cuid())
+  bidId    String   @map("bid_id")
+  url      String   // URL to file (image/doc)
+  type     String   // file type: image/doc/pdf/etc
+  createdAt DateTime @default(now())
+
+  bid      Bid      @relation(fields: [bidId], references: [id], onDelete: Cascade)
+
+  @@map("bid_files")
 }
