@@ -1,0 +1,64 @@
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: params.id },
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+        files: true,
+        bids: {
+          include: {
+            bidder: {
+              select: { name: true, email: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(post, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    return NextResponse.json({ error: "Failed to fetch post" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: params.id },
+      select: { userId: true },
+    });
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    if (post.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden: You can only delete your own posts" }, { status: 403 });
+    }
+
+    await prisma.post.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json({ message: "Post deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
+  }
+}

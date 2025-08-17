@@ -27,7 +27,7 @@ export default function SignInPage() {
         throw new Error(result.error)
       }
 
-      router.push("/dashboard") // Redirect to dashboard or desired page after successful sign-in
+      router.push("/") // Redirect to dashboard or desired page after successful sign-in
     } catch (err: any) {
       setError(err.message || "Failed to sign in")
     } finally {
@@ -39,7 +39,7 @@ export default function SignInPage() {
     setError("")
     setIsLoading(true)
     try {
-      await signIn("google", { callbackUrl: "/dashboard" })
+      await signIn("google", { callbackUrl: "/" })
     } catch (err: any) {
       setError("Failed to sign in with Google")
       setIsLoading(false)
