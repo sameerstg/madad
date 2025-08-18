@@ -19,11 +19,11 @@ export default function Home() {
           </p>
           <div className="flex justify-center">
             <Image
-              src="https://source.unsplash.com/random/800x400/?community"
+              src="https://images.unsplash.com/photo-1558522195-e1201b090344?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Community helping"
               width={800}
               height={400}
-              className="rounded-lg shadow-lg"
+              className="rounded-lg shadow-lg aspect-auto"
             />
           </div>
           <Button asChild className="mt-6 bg-yellow-500 text-black hover:bg-yellow-600">
@@ -42,11 +42,11 @@ export default function Home() {
             <Card className="md:w-1/2 mb-6 md:mb-0 shadow-lg">
               <CardContent className="p-0">
                 <Image
-                  src="https://source.unsplash.com/random/600x400/?helping"
+                  src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Helping hands"
                   width={600}
                   height={400}
-                  className="rounded-lg"
+                  className="w-full h-auto object-cover rounded-lg"
                 />
               </CardContent>
             </Card>
@@ -72,11 +72,12 @@ export default function Home() {
             <Card className="md:w-1/2 mb-6 md:mb-0 shadow-lg">
               <CardContent className="p-0">
                 <Image
-                  src="https://source.unsplash.com/random/600x400/?volunteer"
+                  src="https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Volunteering"
                   width={600}
                   height={400}
-                  className="rounded-lg"
+                  className="w-full h-auto object-cover rounded-lg"
+
                 />
               </CardContent>
             </Card>
