@@ -1,72 +1,81 @@
-'use client'
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Post, PostFile, Bid, User } from "@prisma/client";
+'use client';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Post, PostFile, Bid, User } from '@prisma/client';
 
+// Define the type for the post with relations
 type PostWithRelations = Post & {
   user: { name: string | null; email: string | null };
   files: PostFile[];
   bids: (Bid & { bidder: { name: string | null; email: string | null } })[];
 };
 
-export default function PostPage({ params }: { params: { id: string } }) {
+// Define the props type to satisfy Next.js's PageProps
+interface PostPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function PostPage({ params }: PostPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [post, setPost] = useState<PostWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [deleteError, setDeleteError] = useState("");
+  const [error, setError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Resolve params Promise
   useEffect(() => {
     async function fetchPost() {
       try {
-        const response = await fetch(`/api/posts/${params.id}`);
+        const { id } = await params; // Await the params Promise
+        const response = await fetch(`/api/posts/${id}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch post");
+          throw new Error('Failed to fetch post');
         }
         const data = await response.json();
         setPost(data);
       } catch (err) {
-        setError("An error occurred while fetching the post.");
+        setError('An error occurred while fetching the post.');
       } finally {
         setLoading(false);
       }
     }
     fetchPost();
-  }, [params.id]);
+  }, [params]);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-    setDeleteError("");
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    setDeleteError('');
     setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/posts/${params.id}`, {
-        method: "DELETE",
+      const { id } = await params; // Await the params Promise
+      const response = await fetch(`/api/posts/${id}`, {
+        method: 'DELETE',
       });
       if (response.ok) {
-        router.push("/posts"); // Redirect to posts page after deletion
+        router.push('/posts');
       } else {
         const data = await response.json();
-        setDeleteError(data.error || "Failed to delete post.");
+        setDeleteError(data.error || 'Failed to delete post.');
       }
     } catch (err) {
-      setDeleteError("An error occurred while deleting the post.");
+      setDeleteError('An error occurred while deleting the post.');
     } finally {
       setIsDeleting(false);
     }
   };
 
-  if (status === "loading" || loading) {
+  if (status === 'loading' || loading) {
     return <div className="text-center py-16">Loading...</div>;
   }
 
   if (error || !post) {
-    return <div className="text-center py-16 text-red-500">{error || "Post not found."}</div>;
+    return <div className="text-center py-16 text-red-500">{error || 'Post not found.'}</div>;
   }
 
   return (
@@ -78,7 +87,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
           <p className="text-gray-700 mb-4">{post.description}</p>
-          <p className="text-sm text-gray-500 mb-2">Posted by: {post.user.name || post.user.email || "Anonymous"}</p>
+          <p className="text-sm text-gray-500 mb-2">Posted by: {post.user.name || post.user.email || 'Anonymous'}</p>
           <p className="text-sm text-gray-500 mb-4">Created: {new Date(post.createdAt).toLocaleDateString()}</p>
 
           {post.files.length > 0 && (
@@ -86,20 +95,21 @@ export default function PostPage({ params }: { params: { id: string } }) {
               <h2 className="text-lg font-semibold mb-2">Attached Files</h2>
               <div className="flex flex-wrap gap-4">
                 {post.files.map((file) => (
-                  file.type === "image" ? (
-                    <Image
-                      key={file.id}
-                      src={file.url}
-                      alt="Post file"
-                      width={200}
-                      height={200}
-                      className="rounded-lg object-cover"
-                    />
-                  ) : (
-                    <a key={file.id} href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      {file.type} File
-                    </a>
-                  )
+                  <div key={file.id}>
+                    {file.type === 'image' ? (
+                      <Image
+                        src={file.url}
+                        alt="Post file"
+                        width={200}
+                        height={200}
+                        className="rounded-lg object-cover"
+                      />
+                    ) : (
+                      <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        {file.type} File
+                      </a>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -115,7 +125,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
                   <li key={bid.id} className="border p-4 rounded-lg">
                     <p className="text-gray-700">{bid.text}</p>
                     <p className="text-sm text-gray-500 mt-2">
-                      Bid by: {bid.bidder.name || bid.bidder.email || "Anonymous"} on {new Date(bid.createdAt).toLocaleDateString()}
+                      Bid by: {bid.bidder.name || bid.bidder.email || 'Anonymous'} on{' '}
+                      {new Date(bid.createdAt).toLocaleDateString()}
                     </p>
                   </li>
                 ))}
@@ -132,7 +143,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
                 >
                   Place a Bid
                 </Link>
-                {session.user.id === post.userId && (
+                {session.user?.id === post.userId && (
                   <div className="flex gap-4">
                     <Link
                       href={`/posts/${post.id}/edit`}
@@ -145,7 +156,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
                       disabled={isDeleting}
                       className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-red-300 text-center"
                     >
-                      {isDeleting ? "Deleting..." : "Delete Post"}
+                      {isDeleting ? 'Deleting...' : 'Delete Post'}
                     </button>
                   </div>
                 )}
