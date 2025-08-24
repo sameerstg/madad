@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import { Sun, Moon } from "lucide-react"
 import useTheme from 'next-theme'
+import Image from 'next/image'
 
 export default function Header() {
   const { data: session } = useSession()
@@ -15,10 +16,19 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="bg-blue-600 text-white p-4 sticky top-0 z-50">
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md dark:text-white p-2">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-bold">Madad Sab ke liye</Link>
+        <Link href="/" className="flex items-center">
+          <div className="relative w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12">
+            <Image
+              src="/logo.png"
+              alt="logo"
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 32px, (max-width: 1024px) 40px, 48px"
+            />
+          </div>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-4">

@@ -19,7 +19,7 @@ export default function Home() {
           </p>
           <div className="flex justify-center">
             <Image
-              src="https://images.unsplash.com/photo-1558522195-e1201b090344?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={'/banner1.jpg'}
               alt="Community helping"
               width={800}
               height={400}
@@ -42,7 +42,7 @@ export default function Home() {
             <Card className="md:w-1/2 mb-6 md:mb-0 shadow-lg">
               <CardContent className="p-0">
                 <Image
-                  src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  src="/banner2.jpg"
                   alt="Helping hands"
                   width={600}
                   height={400}
@@ -72,7 +72,7 @@ export default function Home() {
             <Card className="md:w-1/2 mb-6 md:mb-0 shadow-lg">
               <CardContent className="p-0">
                 <Image
-                  src="https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  src="/banner3.jpg"
                   alt="Volunteering"
                   width={600}
                   height={400}
